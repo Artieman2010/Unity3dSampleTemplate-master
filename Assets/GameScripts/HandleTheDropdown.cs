@@ -46,9 +46,10 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
     int thechosen = 0;
     byte[] serializeData;
-    void Start() {
+    void Start()
+    {
 
-            
+
         var y = Camera.main.gameObject.GetComponent<loadHandleTheDropdown>().loaderlist;
         contentObjectOfShopList = y[0].transform;
         contentObject3 = y[1];
@@ -73,17 +74,17 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
 
 
-  
+
 
     void Cmdgeneratekey(int clientID)
     {
         if (NetworkServer.connections.ContainsKey(clientID))
         {
-            if(!playerbuyTimers.ContainsKey(clientID))
+            if (!playerbuyTimers.ContainsKey(clientID))
             {
                 if (forgottenweights.Exists(x => x.IPAddress == NetworkServer.connections[clientID].address))
                 {
-                    var y =forgottenweights.FindAll(x => x.IPAddress == NetworkServer.connections[clientID].address);
+                    var y = forgottenweights.FindAll(x => x.IPAddress == NetworkServer.connections[clientID].address);
                     for (int i = 0; i < y.Count; i++)
                     {
                         TargetactuallyGiveWeights(NetworkServer.connections[clientID], y[i].weightsToGive);
@@ -97,7 +98,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
                 }
 
             }
-            
+
         }
 
     }
@@ -112,22 +113,22 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
     public GameObject shopItemobject;
     public GameObject walker;
 
-      int[] layersf = new int[] { 9, 50, 20, 50, 5 };
-     void Update()
+    int[] layersf = new int[] { 9, 50, 20, 50, 5 };
+    void Update()
     {
-       
+
         transform.eulerAngles = new UnityEngine.Vector3(0, 0, 0);
         timer += Time.deltaTime;
         if (timer > 10)
         {
-            if(PlayerPrefs.GetInt("Compete") != 1)
+            if (PlayerPrefs.GetInt("Compete") != 1)
             {
                 Cmdreloadshoplistmain(NetworkClient.connection.connectionId);
                 timer = 0;
             }
 
-           
-            
+
+
         }
 
 
@@ -149,58 +150,58 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
             NetworkServer.connections[conn].Disconnect();
         }
     }
-    [Command (requiresAuthority = false)]
+    [Command(requiresAuthority = false)]
     void Cmdreloadshoplistmain(int conn)
     {
-        
-            List<string> uploadnames = new List<string>();
-            List<string> publicKeys = new List<string>();
-            List<string> creators = new List<string>();
-            List<decimal> costs = new List<decimal>();
-            List<float> speeds = new List<float>();
-            shopList.Sort((a, b) => b.speed.CompareTo(a.speed));
-            uploadnames = shopList.Select(x => x.thenameofupload).Take(100).ToList();
-            publicKeys = shopList.Select(x => x.publicKey).Take(100).ToList();
-            creators = shopList.Select(x => x.theCreator).Take(100).ToList();
-            costs = shopList.Select(x => x.cost).Take(100).ToList();
-            speeds = shopList.Select(x => x.speed).Take(100).ToList();
+
+        List<string> uploadnames = new List<string>();
+        List<string> publicKeys = new List<string>();
+        List<string> creators = new List<string>();
+        List<decimal> costs = new List<decimal>();
+        List<float> speeds = new List<float>();
+        shopList.Sort((a, b) => b.speed.CompareTo(a.speed));
+        uploadnames = shopList.Select(x => x.thenameofupload).Take(100).ToList();
+        publicKeys = shopList.Select(x => x.publicKey).Take(100).ToList();
+        creators = shopList.Select(x => x.theCreator).Take(100).ToList();
+        costs = shopList.Select(x => x.cost).Take(100).ToList();
+        speeds = shopList.Select(x => x.speed).Take(100).ToList();
         List<int> mostBoughts = new List<int>();
         mostBoughts = shopList.Select(x => x.mostBought).Take(100).ToList();
 
         TargetRpcreloadShopListObjects(NetworkServer.connections[conn], uploadnames, publicKeys, creators, costs, speeds, mostBoughts);
-        
-       
-       
+
+
+
     }
-   
-   
 
 
 
-      [Command(requiresAuthority = false)]
+
+
+    [Command(requiresAuthority = false)]
     public void CmdSearch(int conn, string search)
     {
-        
-        
-            // Perform action
-           
-            List<UploadsInShop> result = shopList.FindAll(x => x.thenameofupload.Contains(search));
-            shopList.Sort((a, b) => b.mostBought.CompareTo(a.mostBought));
-            List<string> uploadnames = new List<string>();
-            List<string> publicKeys = new List<string>();
-            List<string> creators = new List<string>();
-            List<decimal> costs = new List<decimal>();
-            List<float> speeds = new List<float>();
-            uploadnames = result.Select(x => x.thenameofupload).Take(100).ToList();
-            publicKeys = result.Select(x => x.publicKey).Take(100).ToList();
-            creators = result.Select(x => x.theCreator).Take(100).ToList();
-            costs = result.Select(x => x.cost).Take(100).ToList();
-            speeds = result.Select(x => x.speed).Take(100).ToList();
-            List<int> mostBoughts = new List<int>();
-            mostBoughts = shopList.Select(x => x.mostBought).Take(100).ToList();
-            Targetgivethesearchresult(NetworkServer.connections[conn], uploadnames, publicKeys, creators, costs, speeds, mostBoughts);
-       
-       
+
+
+        // Perform action
+
+        List<UploadsInShop> result = shopList.FindAll(x => x.thenameofupload.Contains(search));
+        shopList.Sort((a, b) => b.mostBought.CompareTo(a.mostBought));
+        List<string> uploadnames = new List<string>();
+        List<string> publicKeys = new List<string>();
+        List<string> creators = new List<string>();
+        List<decimal> costs = new List<decimal>();
+        List<float> speeds = new List<float>();
+        uploadnames = result.Select(x => x.thenameofupload).Take(100).ToList();
+        publicKeys = result.Select(x => x.publicKey).Take(100).ToList();
+        creators = result.Select(x => x.theCreator).Take(100).ToList();
+        costs = result.Select(x => x.cost).Take(100).ToList();
+        speeds = result.Select(x => x.speed).Take(100).ToList();
+        List<int> mostBoughts = new List<int>();
+        mostBoughts = shopList.Select(x => x.mostBought).Take(100).ToList();
+        Targetgivethesearchresult(NetworkServer.connections[conn], uploadnames, publicKeys, creators, costs, speeds, mostBoughts);
+
+
     }
     public GameObject contentObject3;
     List<GameObject> shopListObjects1 = new List<GameObject>();
@@ -208,14 +209,14 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
     List<GameObject> shopListObjects3 = new List<GameObject>();
     double[] fakemutvars;
     [TargetRpc]
-    void Targetgivethesearchresult(NetworkConnection conn,   List<string> uploadnames, List<string> publicKeys, List<string> creators, List<decimal> costs, List<float> speeds, List<int> mostBoughts)
+    void Targetgivethesearchresult(NetworkConnection conn, List<string> uploadnames, List<string> publicKeys, List<string> creators, List<decimal> costs, List<float> speeds, List<int> mostBoughts)
     {
 
         var combinedList = uploadnames.Select((n, i) => new UploadsInShop(n, fakeWeights, costs[i], creators[i], publicKeys[i], speeds[i], mostBoughts[i], fakemutvars)).ToList();
         foreach (var item in shopListObjects1)
         {
             Destroy(item);
-            
+
         }
         shopListObjects1.Clear();
         //thetitle, thecreator, and the cost, public key is hidden in script cuz that is eyesore
@@ -227,7 +228,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
             y.nametext.text = "Name: " + item.thenameofupload;
             y.publicKey = item.publicKey;
             y.cost_text.text = "Cost: " + item.cost.ToString();
-           y.theCost = item.cost;
+            y.theCost = item.cost;
             y.theCreator = item.theCreator;
             y.thisObjectsCreator = gameObject;
             y.speedText.text = "Speed:" + item.speed.ToString();
@@ -238,37 +239,37 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
     public Transform contentObject2;
 
-      [Command(requiresAuthority = false)]
+    [Command(requiresAuthority = false)]
     public void CmdGetTheMostpopular(int conn)
     {
-        
-            List<string> uploadnames = new List<string>();
-            List<string> publicKeys = new List<string>();
-            List<string> creators = new List<string>();
-            List<decimal> costs = new List<decimal>();
-            List<float> speeds = new List<float>();
 
-            shopList.Sort((a, b) => b.mostBought.CompareTo(a.mostBought));
-            uploadnames = shopList.Select(x => x.thenameofupload).Take(100).ToList();
-            publicKeys = shopList.Select(x => x.publicKey).Take(100).ToList();
-            creators = shopList.Select(x => x.theCreator).Take(100).ToList();
-            costs = shopList.Select(x => x.cost).Take(100).ToList();
-            speeds = shopList.Select(x => x.speed).Take(100).ToList();
-            List<int> mostBoughts = new List<int>();
-            mostBoughts = shopList.Select(x => x.mostBought).Take(100).ToList();
-            TargetGetTheMostPopulars(NetworkServer.connections[conn], uploadnames, publicKeys, creators, costs, speeds, mostBoughts);
-       
-      
+        List<string> uploadnames = new List<string>();
+        List<string> publicKeys = new List<string>();
+        List<string> creators = new List<string>();
+        List<decimal> costs = new List<decimal>();
+        List<float> speeds = new List<float>();
+
+        shopList.Sort((a, b) => b.mostBought.CompareTo(a.mostBought));
+        uploadnames = shopList.Select(x => x.thenameofupload).Take(100).ToList();
+        publicKeys = shopList.Select(x => x.publicKey).Take(100).ToList();
+        creators = shopList.Select(x => x.theCreator).Take(100).ToList();
+        costs = shopList.Select(x => x.cost).Take(100).ToList();
+        speeds = shopList.Select(x => x.speed).Take(100).ToList();
+        List<int> mostBoughts = new List<int>();
+        mostBoughts = shopList.Select(x => x.mostBought).Take(100).ToList();
+        TargetGetTheMostPopulars(NetworkServer.connections[conn], uploadnames, publicKeys, creators, costs, speeds, mostBoughts);
+
+
     }
     //gotta add this later and actually use this and make it more efficient so rpcreloadlistobjects can be refreshed by clients so we do not hog their memory
     [TargetRpc]
-    void TargetGetTheMostPopulars(NetworkConnection conn,  List<string> uploadnames, List<string> publicKeys, List<string> creators, List<decimal> costs, List<float> speeds, List<int> mostBoghts)
+    void TargetGetTheMostPopulars(NetworkConnection conn, List<string> uploadnames, List<string> publicKeys, List<string> creators, List<decimal> costs, List<float> speeds, List<int> mostBoghts)
     {
         var combinedList = uploadnames.Select((n, i) => new UploadsInShop(n, fakeWeights, costs[i], creators[i], publicKeys[i], speeds[i], mostBoghts[i], fakemutvars)).ToList();
         foreach (var item in shopListObjects2)
         {
             Destroy(item);
-           
+
         }
         shopListObjects2.Clear();
         //thetitle, thecreator, and the cost, public key is hidden in script cuz that is eyesore
@@ -289,65 +290,65 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         }
     }
 
-  
-  
+
+
 
 
     public byte[] ConvertDataToBytes(double[][][] data)
-        {
+    {
         // Convert the data to bytes
         // Example:
         BinaryFormatter bf = new BinaryFormatter();
-            using (var stream = new MemoryStream())
-            {
-                bf.Serialize(stream, data);
-                serializeData = stream.ToArray();
-            }
-        return serializeData;
-        }
-
-        public double[][][] ConvertBytesToData(byte[] bytes)
+        using (var stream = new MemoryStream())
         {
-            MemoryStream streamd = new MemoryStream(bytes);
-
-            // Create a BinaryFormatter
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            // Deserialize the object from the MemoryStream
-            return (double[][][])formatter.Deserialize(streamd);
+            bf.Serialize(stream, data);
+            serializeData = stream.ToArray();
+        }
+        return serializeData;
     }
 
-      
-    
-     
+    public double[][][] ConvertBytesToData(byte[] bytes)
+    {
+        MemoryStream streamd = new MemoryStream(bytes);
 
-        // custom message to send the encrypted data
+        // Create a BinaryFormatter
+        BinaryFormatter formatter = new BinaryFormatter();
+
+        // Deserialize the object from the MemoryStream
+        return (double[][][])formatter.Deserialize(streamd);
+    }
 
 
-        double[][][] fakeWeights;
-    
+
+
+
+    // custom message to send the encrypted data
+
+
+    double[][][] fakeWeights;
+
     [TargetRpc]
     void TargetRpcreloadShopListObjects(NetworkConnection conn, List<string> uploadnames, List<string> publicKeys, List<string> creators, List<decimal> costs, List<float> speeds, List<int> mostboughts)
     {
-        
+
         Debug.Log("wasgivenlist");
 
         var combinedList = uploadnames.Select((n, i) => new UploadsInShop(n, fakeWeights, costs[i], creators[i], publicKeys[i], speeds[i], mostboughts[i], fakemutvars)).ToList();
         foreach (var item in shopListObjects3)
         {
-            
-           Destroy(item);
-            
+
+            Destroy(item);
+
         }
         shopListObjects3.Clear();
         //TEST AND ADD TO THE BLOCK CHECKER FOR IT TO BE RIGHT URL
         //thetitle, thecreator, and the cost, public key is hidden in script cuz that is eyesore
         foreach (var item in combinedList)
         {
-          
+
             var x = Instantiate(shopItemobject, contentObjectOfShopList);
             var y = x.GetComponent<ShopScript>();
-           y.named = item.thenameofupload;
+            y.named = item.thenameofupload;
             y.nametext.text = "Name: " + item.thenameofupload;
             y.publicKey = item.publicKey;
             y.cost_text.text = "Cost: " + item.cost.ToString();
@@ -358,7 +359,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
             y.downloadText.text = "Downloads: " + item.mostBought.ToString();
             shopListObjects3.Add(x);
         }
-      
+
 
 
     }
@@ -366,15 +367,17 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
     public TMP_InputField enterCost;
     public TMP_InputField enterPublicKey;
     public TMP_InputField enterprivateKey;
-  
+
 
     public TMP_InputField enterCaptcha;
-    public void HandleInputData(int val){
+    public void HandleInputData(int val)
+    {
         thechosen = val;
     }
     public GameObject captchaObject;
     public GameObject uploadObject;
-    public void UploadToShop(){
+    public void UploadToShop()
+    {
 
 
         //CHECK TO MAKE SURE THE PARSING DOES NOT GIVE ERROR 
@@ -382,35 +385,51 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
 
         StartCoroutine(dothejob());
-          
-        
+
+
     }
+    int iterations = 200000;
     IEnumerator tester()
     {
+        thechosen = 0;
         double[][][] weightsUpload;
         double[] mutUpload;
+        NeuralNetwork net = new NeuralNetwork(layersf, null);
         BinaryFormatter bf = new BinaryFormatter();
         //change everything to numbers later on 
         using (FileStream fs = new FileStream($"./Assets/dat/WeightSave{thechosen}.bin", FileMode.Open))
-            weightsUpload = (double[][][])bf.Deserialize(fs);
+            net.weights = (double[][][])bf.Deserialize(fs);
         BinaryFormatter bf2 = new BinaryFormatter();
         using (FileStream fs2 = new FileStream($"./Assets/dat/MutVars{thechosen}.bin", FileMode.Open))
-            mutUpload = (double[])bf2.Deserialize(fs2);
-        NeuralNetwork net = new NeuralNetwork(layersf, weightsUpload);
+            net.mutatableVariables = (double[])bf2.Deserialize(fs2);
+
+
+        // Load metadata like best error and generation
+        StreamReader sr = File.OpenText($"./Assets/dat/WeightSaveMeta{thechosen}.mta");
+        string firstLine = sr.ReadLine().Trim();
+        //generationNumber = int.Parse(firstLine.Split('#')[0]) + 1;
+        //bestEverError = double.Parse(firstLine.Split('#')[1]);
+        //timeManager.offsetTime = int.Parse(firstLine.Split('#')[2]);
+        //bestGenome = firstLine.Split('#')[3];
+        net.genome = firstLine.Split('#')[3];
+        sr.Close();
 
         //change everything to numbers later on 
 
-        net.weights = weightsUpload;
-        net.mutatableVariables = mutUpload;
-        yield return new WaitForSeconds(0.1f);
+        //net.weights = weightsUpload;
+        //net.mutatableVariables = mutUpload;
+        //yield return new WaitForSeconds(0.1f);
         NetEntity y = Instantiate(walker, spawnPlace).GetComponent<NetEntity>();
-        y.Init(net, 1, layersf[0], 200000, 0);
+        y.Init(net, 1, layersf[0], iterations, 0);
 
 
-
-        while (iteratord(y.gameObject) != false)
+        while (iterations >= 0)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.002f);
+            Debug.Log("iterating net entities");
+            if (iterations % 10 == 0)
+                iteratord(y);
+            iterations -= 1;
         }
 
         yield return new WaitForSeconds(5);
@@ -478,46 +497,46 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
     [Command(requiresAuthority = false)]
     void Cmdaddinshop(string thenameofadd, byte[] vectorArray, decimal cost, string theCreator, string thePass, string thePublickey, string playerAnswer, int clientID, byte[] mutvars)
     {
-       
-            // byte[] decryptedData = encryption.DecryptData(theactualuploadd);
-            // Convert the bytes to data
-            // float[][][] theactualupload = ConvertBytesToData(decryptedData);
-            // Handle the data
-            Debug.Log("receivedAddRequest");
 
-            Debug.Log(gameObject.name);
-            if (thenameofadd.Length > 0 && thenameofadd.Length < 20 && cost <= 100m && !shopList.Exists(x => x.thenameofupload == thenameofadd))
+        // byte[] decryptedData = encryption.DecryptData(theactualuploadd);
+        // Convert the bytes to data
+        // float[][][] theactualupload = ConvertBytesToData(decryptedData);
+        // Handle the data
+        Debug.Log("receivedAddRequest");
+
+        Debug.Log(gameObject.name);
+        if (thenameofadd.Length > 0 && thenameofadd.Length < 20 && cost <= 100m && !shopList.Exists(x => x.thenameofupload == thenameofadd))
+        {
+            sentImagesandViews = gameObject.GetComponent<CaptchaScript>().sentImagesandViews;
+            bytes = gameObject.GetComponent<CaptchaScript>().bytes;
+
+
+            playerAnswer = playerAnswer.ToLower();
+
+            var h = sentImagesandViews.Find(x => x.connectionID == clientID);
+
+            if (playerAnswer == bytes[h.indexinlist].playerAnswer.ToLower())
             {
-                sentImagesandViews = gameObject.GetComponent<CaptchaScript>().sentImagesandViews;
-                bytes = gameObject.GetComponent<CaptchaScript>().bytes;
 
+                sentImagesandViews.Remove(h);
+                Debug.Log("passedCaptcha");
+                StartCoroutine(checkAnadd(thenameofadd, vectorArray, cost, theCreator, thePass, thePublickey, clientID, mutvars));
 
-                playerAnswer = playerAnswer.ToLower();
-
-                var h = sentImagesandViews.Find(x => x.connectionID == clientID);
-
-                if (playerAnswer == bytes[h.indexinlist].playerAnswer.ToLower())
-                {
-
-                    sentImagesandViews.Remove(h);
-                    Debug.Log("passedCaptcha");
-                    StartCoroutine(checkAnadd(thenameofadd, vectorArray, cost, theCreator, thePass, thePublickey, clientID, mutvars));
-
-
-                }
-                else
-                {
-                gameObject.GetComponent<LeaderboardList>().Targetdidnotpasscaptcha(NetworkServer.connections[clientID]);
-                }
 
             }
             else
             {
-                gameObject.GetComponent<LeaderboardList>().TargetToolarget(NetworkServer.connections[clientID]);
+                gameObject.GetComponent<LeaderboardList>().Targetdidnotpasscaptcha(NetworkServer.connections[clientID]);
             }
-        
-       
-      
+
+        }
+        else
+        {
+            gameObject.GetComponent<LeaderboardList>().TargetToolarget(NetworkServer.connections[clientID]);
+        }
+
+
+
 
 
 
@@ -526,7 +545,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
 
     }
-   IEnumerator checkAnadd(string thenameofadd, byte[] hid, decimal cost, string theCreator, string thePass, string thePublickey, int connID, byte[] mutvars)
+    IEnumerator checkAnadd(string thenameofadd, byte[] hid, decimal cost, string theCreator, string thePass, string thePublickey, int connID, byte[] mutvars)
     {
         var xd = ConvertBytesTodouble1(mutvars);
         var floatArray = ConvertBytesToData(hid);
@@ -549,15 +568,15 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         {
             if (k <= 3)
             {
-               
-                  
-                    UploadsInShop upload = new UploadsInShop(thenameofadd, floatArray, cost, theCreator, thePublickey, 0, 0, xd);
-                    shopList.Add(upload);
-                  
-                    Targetrunthesimulation(NetworkServer.connections[0], hid, shopList.Count - 1, mutvars);
-                   
-                    Debug.Log(shopList.Count);
-                
+
+
+                UploadsInShop upload = new UploadsInShop(thenameofadd, floatArray, cost, theCreator, thePublickey, 0, 0, xd);
+                shopList.Add(upload);
+
+                Targetrunthesimulation(NetworkServer.connections[0], hid, shopList.Count - 1, mutvars);
+
+                Debug.Log(shopList.Count);
+
 
             }
 
@@ -568,73 +587,73 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         }
 
     }
-   
+
     [TargetRpc]
     void Targetrunthesimulation(NetworkConnection conn, byte[] by, int index, byte[] mutvars)
     {
-       
+
         StartCoroutine(walkingTest(index, by, mutvars));
     }
     public Transform spawnPlace;
-    IEnumerator walkingTest( int index, byte[] d, byte[] mutvars)
+    IEnumerator walkingTest(int index, byte[] d, byte[] mutvars)
     {
         var yd = ConvertBytesToData(d);
         var ld = ConvertBytesTodouble1(mutvars);
         NeuralNetwork net = new NeuralNetwork(layersf, yd);
 
         //change everything to numbers later on 
-       
+
         net.weights = yd;
         net.mutatableVariables = ld;
         yield return new WaitForSeconds(0.1f);
-        NetEntity y  = Instantiate(walker, spawnPlace).GetComponent<NetEntity>();
-        y.Init(net, 1, layersf[0], 4000, 0 );
-      
+        NetEntity y = Instantiate(walker, spawnPlace).GetComponent<NetEntity>();
+        y.Init(net, 1, layersf[0], 4000, 0);
 
-        
-        while(iteratord(y.gameObject) != false)
+
+
+        while (iteratord(y) != false)
         {
             yield return new WaitForSeconds(0.05f);
         }
 
         yield return new WaitForSeconds(5);
-       
-        
-      /*  if(k < 0)
-        {
-            k *= -1f;
-        }*/
+
+
+        /*  if(k < 0)
+          {
+              k *= -1f;
+          }*/
         float speed = y.transform.position.x / 2.1f;
         Debug.Log(speed);
         Destroy(y.gameObject);
         CmdsetSpeedInShopList(index, Mathf.RoundToInt(speed * 10f) / 10f, secretCode);
 
 
-        
+
 
     }
-    
-    
-    bool iteratord(GameObject lookat)
+
+
+    bool iteratord(NetEntity lookat)
     {
         int amnt = 1;
-        
-            amnt -= lookat.GetComponent<NetEntity>().Elapse() ? 0 : 1;
-     
+
+        amnt -= lookat.Elapse() ? 0 : 1;
+
         return amnt != 0;
     }
     [Command(requiresAuthority = false)]
     void CmdsetSpeedInShopList(int index, float speed, string secretCoded)
     {
-        if(secretCode == secretCoded)
+        if (secretCode == secretCoded)
         {
             shopList[index].speed = speed;
         }
-        
+
     }
     double[][][] shouldbesentweights;
-      [Command(requiresAuthority = false)]
-    void CmdExecuteBuyWeights(string theSeller, decimal theCost,  int connectionId,  string thename, string publicKeyTheir) 
+    [Command(requiresAuthority = false)]
+    void CmdExecuteBuyWeights(string theSeller, decimal theCost, int connectionId, string thename, string publicKeyTheir)
     {
 
 
@@ -643,17 +662,17 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         if ((float)NetworkTime.time - lastCommandTime >= buyCooldown)
         {
             // Perform action
-          //  if (connectionId != 0) I DISABLED THE PROTECTION CUZ THAT IS STUPID;
+            //  if (connectionId != 0) I DISABLED THE PROTECTION CUZ THAT IS STUPID;
             {
-              //  playerbuyTimers[connectionId] = (float)NetworkTime.time;
+                //  playerbuyTimers[connectionId] = (float)NetworkTime.time;
             }
 
             var result = shopList.FirstOrDefault(c => c.theCreator == theSeller && c.cost == theCost && c.thenameofupload == thename);
             if (result != null)
             {
                 shouldbesentweights = result.theweightupload;
-                
-                
+
+
                 checkformoney(connectionId, theCost, result.publicKey, shopList.IndexOf(result), publicKeyTheir);
             }
         }
@@ -665,16 +684,16 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
 
 
-        
-                
-                
-                
 
 
 
 
-            
-     }
+
+
+
+
+
+    }
 
     public async void GetAverageBlockTimeForMonth()
     {
@@ -697,9 +716,9 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
         // Calculate the average block time (add 1 second buffer)
         var avgBlockTimeInSeconds = (timeDiff.TotalSeconds / blocksMined) + 1;
-        ethertime =  (float)avgBlockTimeInSeconds;
+        ethertime = (float)avgBlockTimeInSeconds;
 
-       
+
 
     }
     float ethertime;
@@ -710,9 +729,9 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
 
 
-       GetAverageBlockTimeForMonth();
+        GetAverageBlockTimeForMonth();
         yield return new WaitForSeconds(1f);
-        
+
         yield return new WaitForSeconds(ethertime);
 
         CheckTransaction checkit = new CheckTransaction();
@@ -721,12 +740,12 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         checkit.publicAddress2 = endPayer;
         checkit.amount = Amount;
         checkit.CheckLatestBlock();
-      
+
         yield return new WaitForSeconds(302);
-        if(checkit.wentOk == true)
+        if (checkit.wentOk == true)
         {
             gameObject.GetComponent<CompetitionScriptRedo>().amountToGive += Decimal.Multiply(Amount, 0.1m);
-           var x = ConvertDataToBytes(shouldbesentweights);
+            var x = ConvertDataToBytes(shouldbesentweights);
             try
             {
                 TargetactuallyGiveWeights(NetworkServer.connections[connectionID], x);
@@ -738,28 +757,28 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
             shopList[index].mostBought += 1;
             checkit.wentOk = false;
 
-           
-         
+
+
         }
-         
+
     }
-    List<ForgottenWeights> forgottenweights = new List<ForgottenWeights>(); 
+    List<ForgottenWeights> forgottenweights = new List<ForgottenWeights>();
     [TargetRpc]
-   void TargetactuallyGiveWeights(NetworkConnection conn,  byte[] x)
+    void TargetactuallyGiveWeights(NetworkConnection conn, byte[] x)
     {
-       // byte[] decryptedData = encryption.DecryptData(x);
+        // byte[] decryptedData = encryption.DecryptData(x);
         // Convert the bytes to data
         double[][][] boughtWeights = ConvertBytesToData(x);
         // Handle the data
-       
-     
-        
+
+
+
 
         StartCoroutine(check(boughtWeights, 0, null, 0, null, null));
-           
 
-        
-       
+
+
+
     }
     public float cooldownTime = 0.1f; // Time in seconds between commands
 
@@ -767,7 +786,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
     public float buyCooldown = 0.5f;
     private Dictionary<int, float> playerbuyTimers = new Dictionary<int, float>();
-    IEnumerator check(double[][][] boughtWeights, int action, string seller, decimal theCost,  ProtectedString name, string publicAddress)
+    IEnumerator check(double[][][] boughtWeights, int action, string seller, decimal theCost, ProtectedString name, string publicAddress)
     {
         BinaryFormatter bf = new BinaryFormatter();
 
@@ -793,7 +812,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
                 }
 
             }
-          
+
             if (action == 0)
             {
                 if (actuallySomethinghere != true) //make sure is called after for loop if not, then use corountine, same for serialization
@@ -808,7 +827,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
             }
             else if (action == 1)
             {
-                if(actuallySomethinghere == true)
+                if (actuallySomethinghere == true)
                 {
                     var x = Instantiate(errorObject, cotnetErrors);
                     x.transform.GetChild(2).gameObject.GetComponent<TMP_Text>().text = "You used up all your saves.";
@@ -823,7 +842,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
                 }
 
             }
-            
+
         }
         yield return null;
     }
@@ -831,22 +850,22 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
     public GameObject errorObject;
     double[][][] randomweightss;
 
-  
-        public void buyTheWeights(string seller, decimal theCost, ProtectedString publicKey, ProtectedString name)
-        {
-        var account = new Nethereum.Web3.Accounts.Account(enterprivateKey.text);
-            var publicAddress = account.Address;
-       // processingTransactionloading.gameObject.SetActive(true);
-       // processingTransactionloading.Play();
-        StartCoroutine(check(randomweightss, 1, seller, theCost,  name, publicAddress));
 
-             //gottamaketransactionandcheckit
-        }
+    public void buyTheWeights(string seller, decimal theCost, ProtectedString publicKey, ProtectedString name)
+    {
+        var account = new Nethereum.Web3.Accounts.Account(enterprivateKey.text);
+        var publicAddress = account.Address;
+        // processingTransactionloading.gameObject.SetActive(true);
+        // processingTransactionloading.Play();
+        StartCoroutine(check(randomweightss, 1, seller, theCost, name, publicAddress));
+
+        //gottamaketransactionandcheckit
+    }
     public GameObject confirmbuy;
     string readypublickey;
     decimal readycost;
     string thereadycreatorl;
-        string namedready;
+    string namedready;
     public void givetheparameters(string publicKey, decimal theCost, string theCreator, string named)
     {
         readypublickey = publicKey;
@@ -868,10 +887,10 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
     }
     public void therealbuy(string selleraddress, decimal theAmount, string theCreator, string named)
     {
-       var y = GetComponent<LeaderboardList>().ethersendobject.transform.GetChild(4).gameObject.GetComponent<EtherTransferCoroutinesUnityWebRequest>();
+        var y = GetComponent<LeaderboardList>().ethersendobject.transform.GetChild(4).gameObject.GetComponent<EtherTransferCoroutinesUnityWebRequest>();
         y.PrivateKey = enterprivateKey.text;
 
-    
+
         y.AddressTo = selleraddress;
 
         y.Amount = System.Decimal.Multiply(theAmount, 0.7m);
@@ -882,14 +901,15 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
 
         y.Amount = System.Decimal.Multiply(theAmount, 0.3m);
         y.TransferRequest();
-       buyTheWeights(theCreator, theAmount, selleraddress, named);
+        buyTheWeights(theCreator, theAmount, selleraddress, named);
 
     }
-    
+
 
 
 }
-public class UploadsInShop{
+public class UploadsInShop
+{
     public string thenameofupload;
     public double[][][] theweightupload;
     public double[] mutvars;
@@ -924,7 +944,7 @@ public class CheckTransaction
     public async void CheckLatestBlock()
     {
         // Connect to the Ethereum network
-      
+
 
         // Get the latest block number
 
@@ -949,7 +969,7 @@ public class CheckTransaction
         var latestBlockNumber2 = await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
 
 
-        if((Convert.ToInt64(latestBlockNumber2) - Convert.ToInt64(latestBlockNumber)) > 12)
+        if ((Convert.ToInt64(latestBlockNumber2) - Convert.ToInt64(latestBlockNumber)) > 12)
         {
             var filteredTransactions = block.Transactions.Where(t => t.From == publicAddress1 && t.Value.Value >= Web3.Convert.ToWei(amount)
             && block.Transactions.Any(u => u.From == publicAddress1 && u.To == yourAddress && u.Value.Value >= Web3.Convert.ToWei(Decimal.Multiply(0.3m, amount)))
@@ -961,7 +981,7 @@ public class CheckTransaction
             return false;
         }
         // Filter transactions to check if there's a transaction from publicAddress1 to both publicAddress2 and yourAddress with the desired amount
-        
+
     }
 }
 public class ForgottenWeights
