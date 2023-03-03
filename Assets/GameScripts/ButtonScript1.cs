@@ -57,7 +57,7 @@ public class ButtonScript1 : NetworkBehaviour
         x.RegenerateCode.onClick.AddListener(c.generateCodebutton);
         x.copyCode.onClick.AddListener(c.copyFromClipboard);
         x.firstTab.onClick.AddListener(maintabshop);
-        x.searchTab.onClick.AddListener(secondtabshop);
+        x.secondTab.onClick.AddListener(secondtabshop);
         x.searchTab.onClick.AddListener(searchtab);
         x.doSearch.onClick.AddListener(searchCall);
         x.dropdownpick.onValueChanged.AddListener(d.HandleInputData);
@@ -117,7 +117,11 @@ public class ButtonScript1 : NetworkBehaviour
             item.color = Color.white;
         }
         tabColors[1].color = Color.yellow;
+
+
+
     }
+   
     public TMP_InputField searchBar;
     public void searchtab()
     {

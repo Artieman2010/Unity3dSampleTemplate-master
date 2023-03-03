@@ -6,10 +6,14 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Mirror;
+using TMPro;
 
 public class NetEntity1 : NetworkBehaviour
 {
 #if UNITY_SERVER|| UNITY_EDITOR
+    public TMP_Text ogrank;
+    public TMP_Text nameofus;
+    
     public NeuralNetwork net;
 
     public Sense[] senses;

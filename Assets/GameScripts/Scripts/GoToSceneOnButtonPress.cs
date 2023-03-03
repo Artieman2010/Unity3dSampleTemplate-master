@@ -12,6 +12,7 @@ public class GoToSceneOnButtonPress : MonoBehaviour
 	public bool isCompete;
 	private void Start()
 	{
+		
 		if(PlayerPrefs.GetInt("TOSAgreed") == 0)
 		{
 			SceneManager.LoadScene("TOSScene");
@@ -25,12 +26,20 @@ public class GoToSceneOnButtonPress : MonoBehaviour
     }
 	IEnumerator createFiles()
 	{
-
+		
+		Directory.CreateDirectory(Application.persistentDataPath + "/dat");
+		//create new files
         for (int i = 0; i < 2; i++)
         {
 			try
 			{
-                FileStream fs = new FileStream(Application.dataPath + $"/PlayerDataddFile{i}.json", FileMode.CreateNew); //change to something more usable in future
+                FileStream fs = new FileStream(Application.persistentDataPath + $"/WeightSave{i}.json", FileMode.CreateNew);
+				FileStream fsd = new FileStream(Application.persistentDataPath + $"/dat/WeightSaveMeta{i}.mta", FileMode.CreateNew);
+				FileStream fs2 = new FileStream(Application.persistentDataPath + $"/dat/MutVars{i}.bin", FileMode.CreateNew);
+
+
+
+                    //change to something more usable in future
             }
 			catch
 			{
@@ -39,6 +48,8 @@ public class GoToSceneOnButtonPress : MonoBehaviour
           
 
         }
+		FileStream fsl = new FileStream(Application.persistentDataPath + "/dat/hist.txt", FileMode.CreateNew);
+
 		yield return new WaitForSeconds(0.1f);
         PlayerPrefs.SetInt("hasLoadedWeights", 1);
     }
@@ -56,5 +67,9 @@ public class GoToSceneOnButtonPress : MonoBehaviour
             PlayerPrefs.SetInt("Compete", 1);
         }
 		SceneManager.LoadSceneAsync(name); 
+	}
+	public void Quit()
+	{
+		Application.Quit();
 	}
 }

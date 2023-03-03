@@ -196,7 +196,7 @@ public class NeuralNetwork : IComparable<NeuralNetwork>
     /// </summary>
     private void InitWeights(double[][][] persistenceWeights)
     {
-        //StreamReader streamReader = File.OpenText("./Assets/dat/WeightSave.dat");
+        //StreamReader streamReader = File.OpenText("./dat/WeightSave.dat");
         //string[] lines = streamReader.ReadToEnd().Split('\n');
         //streamReader.Close();
 

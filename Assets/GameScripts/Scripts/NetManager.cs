@@ -6,6 +6,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using TMPro;
 using System.Security.Cryptography;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 public class NetManager : MonoBehaviour
 {
@@ -85,8 +87,8 @@ public class NetManager : MonoBehaviour
         generationText.text = generationNumber.ToString() + " : " + trial.ToString();
 
         // If the hist.txt file does not exist, create it and add data labels
-        if (!File.Exists("./Assets/dat/hist.txt"))
-            using (StreamWriter sw = File.AppendText("./Assets/dat/hist.txt"))
+        if (!File.Exists(Application.dataPath + "./dat/hist.txt"))
+            using (StreamWriter sw = File.AppendText(Application.dataPath + "./dat/hist.txt"))
                 sw.WriteLine("generation, Top Error, Gen Error");
     }
     private void Start()
@@ -139,31 +141,31 @@ public class NetManager : MonoBehaviour
                 //    bestEverError = bestError;
                 //    bestGenome = persistenceNetwork.genome.Substring(0, 8) + "a";
 
-                //    using (StreamWriter sw = File.AppendText("./Assets/dat/hist.txt"))
+                //    using (StreamWriter sw = File.AppendText("./dat/hist.txt"))
                 //        sw.WriteLine((generationNumber).ToString() + ", " + bestEverError);
 
                 //    // Save best weights
                 //    BinaryFormatter bf = new BinaryFormatter();
-                //    using (FileStream fs = new FileStream("./Assets/dat/WeightSave.bin", FileMode.Create))
+                //    using (FileStream fs = new FileStream("./dat/WeightSave.bin", FileMode.Create))
                 //        bf.Serialize(fs, persistenceNetwork.weights);
 
                 //    // Get hash of best weights
-                //    bestHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes("./Assets/dat/WeightSave.bin")));
+                //    bestHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes("./dat/WeightSave.bin")));
 
                 ////    // Save best mutatable variables
                 ////    BinaryFormatter bf2 = new BinaryFormatter();
-                ////    using (FileStream fs2 = new FileStream("./Assets/dat/MutVars.bin", FileMode.Create))
+                ////    using (FileStream fs2 = new FileStream("./dat/MutVars.bin", FileMode.Create))
                 ////        bf2.Serialize(fs2, persistenceNetwork.mutatableVariables);
 
                 //}
                 //else if (generationNumber % timeBetweenGenerationProgress == 0)
-                //    using (StreamWriter sw = File.AppendText("./Assets/dat/hist.txt"))
+                //    using (StreamWriter sw = File.AppendText("./dat/hist.txt"))
                 //        sw.WriteLine((generationNumber).ToString() + ", " + bestEverError);
 
                 //if (generationNumber % timeBetweenSave == 0 && timeBetweenSave != -1)
                 //{
                 //    // Save metadata
-                //    StreamWriter ps = new StreamWriter("./Assets/dat/WeightSaveMeta.mta");
+                //    StreamWriter ps = new StreamWriter("./dat/WeightSaveMeta.mta");
                 //    ps.WriteLine((generationNumber).ToString() + "#" +
                 //        (bestEverError).ToString() + "#" +
                 //        ((int)Time.realtimeSinceStartup + timeManager.offsetTime).ToString() + "#" +
@@ -223,21 +225,21 @@ public class NetManager : MonoBehaviour
                 {
                     bestGenome = persistenceNetwork.genome.Substring(0, 8) + "a";
 
-                    StreamWriter persistence = new StreamWriter($"./Assets/dat/WeightSaveMeta{theChosen}.mta");
+                    StreamWriter persistence = new StreamWriter(Application.dataPath +$"./dat/WeightSaveMeta{theChosen}.mta");
                     persistence.WriteLine((generationNumber).ToString() + "#" +
                         (bestEverError).ToString() + "#" +
                         ((int)Time.realtimeSinceStartup + timeManager.offsetTime).ToString() + "#" +
                         bestGenome);
 
                     BinaryFormatter bf = new BinaryFormatter();
-                    using (FileStream fs = new FileStream($"./Assets/dat/WeightSave{theChosen}.bin", FileMode.Create))
+                    using (FileStream fs = new FileStream(Application.dataPath + $"./dat/WeightSave{theChosen}.bin", FileMode.Create))
                         bf.Serialize(fs, persistenceNetwork.weights);
                     // Get hash of best weights
-                    bestHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes($"./Assets/dat/WeightSave{theChosen}.bin")));
+                    bestHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes(Application.dataPath + $"./dat/WeightSave{theChosen}.bin")));
 
                     // Save best mutatable variables
                     BinaryFormatter bf2 = new BinaryFormatter();
-                    using (FileStream fs2 = new FileStream($"./Assets/dat/MutVars{theChosen}.bin", FileMode.Create))
+                    using (FileStream fs2 = new FileStream(Application.dataPath + $"./dat/MutVars{theChosen}.bin", FileMode.Create))
                         bf2.Serialize(fs2, persistenceNetwork.mutatableVariables);
 
                     persistence.Close();
@@ -250,12 +252,12 @@ public class NetManager : MonoBehaviour
                     persistenceNetwork.genome = nets[nets.Count - 1].genome;
                     bestEverError = bestError;
 
-                    using (StreamWriter sw = File.AppendText("./Assets/dat/hist.txt"))
+                    using (StreamWriter sw = File.AppendText(Application.dataPath + "./dat/hist.txt"))
                         sw.WriteLine((generationNumber).ToString() + ", " + bestEverError + ", " + bestError);
 
                 }
                 else if (generationNumber % timeBetweenGenerationProgress == 0)
-                    using (StreamWriter sw = File.AppendText("./Assets/dat/hist.txt"))
+                    using (StreamWriter sw = File.AppendText(Application.dataPath + "./dat/hist.txt"))
                         sw.WriteLine((generationNumber).ToString() + ", " + bestEverError + ", " + bestError);
 
                 // Find the top 3 *individual* genomes and add them to a `topGenomes` list
@@ -384,7 +386,10 @@ public class NetManager : MonoBehaviour
         amntLeft = amnt;
         return amnt != 0;
     }
-
+    public void LeavetheTrain()
+    {
+        SceneManager.LoadScene(0);
+    }
     void Finalizer()
     {
         //// Create copies of top 3 genomes to replace the worst neural networks
@@ -458,10 +463,10 @@ public class NetManager : MonoBehaviour
 
         //    // Save temp weights
         //    BinaryFormatter bf = new BinaryFormatter();
-        //    using (FileStream fs = new FileStream("./Assets/dat/temp_weights.bin", FileMode.Create))
+        //    using (FileStream fs = new FileStream("./dat/temp_weights.bin", FileMode.Create))
         //        bf.Serialize(fs, nets[i].weights);
         //    // Get hash of temp weights
-        //    nets[i].weightsHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes("./Assets/dat/temp_weights.bin")));
+        //    nets[i].weightsHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes("./dat/temp_weights.bin")));
 
         //}
         //nets[nets.Count - 1].isBest = true;
@@ -645,21 +650,21 @@ public class NetManager : MonoBehaviour
 
             // Load weights data into `persistenceNetwork`
             BinaryFormatter bf = new BinaryFormatter();
-            using (FileStream fs = new FileStream($"./Assets/dat/WeightSave{theChosen}.bin", FileMode.Open))
+            using (FileStream fs = new FileStream(Application.dataPath + $"./dat/WeightSave{theChosen}.bin", FileMode.Open))
                 persistenceNetwork.weights = (double[][][])bf.Deserialize(fs);
             // Load mutVar data into `persistenceNetwork`
             BinaryFormatter bf2 = new BinaryFormatter();
-            using (FileStream fs2 = new FileStream($"./Assets/dat/MutVars{theChosen}.bin", FileMode.Open))
+            using (FileStream fs2 = new FileStream(Application.dataPath + $"./dat/MutVars{theChosen}.bin", FileMode.Open))
                 persistenceNetwork.mutatableVariables = (double[])bf2.Deserialize(fs2);
             //bestMutVars = persistenceNetwork.mutatableVariables;
 
             // Get hash of best weights
-            bestHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes($"./Assets/dat/WeightSave{theChosen}.bin")));
+            bestHash = ByteArrayToString(new MD5CryptoServiceProvider().ComputeHash(System.IO.File.ReadAllBytes(Application.dataPath + $"./dat/WeightSave{theChosen}.bin")));
 
 
 
             // Load metadata like best error and generation
-            StreamReader sr = File.OpenText($"./Assets/dat/WeightSaveMeta{theChosen}.mta");
+            StreamReader sr = File.OpenText(Application.dataPath + $"./dat/WeightSaveMeta{theChosen}.mta");
             string firstLine = sr.ReadLine().Trim();
             generationNumber = int.Parse(firstLine.Split('#')[0]) + 1;
             bestEverError = double.Parse(firstLine.Split('#')[1]);
@@ -679,31 +684,31 @@ public class NetManager : MonoBehaviour
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
 
-        File.Copy("./Assets/dat/WeightSave.dat", "./Assets/dat/" + fitness + "_WeightSave.dat");
-        Console.WriteLine("* Copied \"./Assets/dat/WeightSave.dat\" to \"./Assets/dat/" + fitness + "_WeightSave.dat\"");
-        File.Copy("./Assets/dat/WeightSaveMeta.mta", "./Assets/dat/" + fitness + "_WeightSaveMeta.mta");
-        Console.WriteLine("* Copied \"./Assets/dat/WeightSaveMeta.mta\" to \"./Assets/dat/" + fitness + "_WeightSaveMeta.mta\"");
+        File.Copy(Application.dataPath + "./dat/WeightSave.dat", Application.dataPath + "./dat/" + fitness + "_WeightSave.dat");
+        Console.WriteLine($"* Copied \"{Application.dataPath}./dat/WeightSave.dat\" to \"./dat/" + fitness + "_WeightSave.dat\"");
+        File.Copy("./dat/WeightSaveMeta.mta", "./dat/" + fitness + "_WeightSaveMeta.mta");
+        Console.WriteLine("* Copied \"./dat/WeightSaveMeta.mta\" to \"./dat/" + fitness + "_WeightSaveMeta.mta\"");
 
         // Upload weight save
-        Console.WriteLine("* Uploading \"./Assets/dat/" + fitness + "_WeightSave.dat\" to http://achillium.us.to/digitneuralnet/");
+        Console.WriteLine("* Uploading \"./dat/" + fitness + "_WeightSave.dat\" to http://achillium.us.to/digitneuralnet/");
         System.Net.WebClient Client = new System.Net.WebClient();
         Client.Headers.Add("enctype", "multipart/form-data");
-        byte[] result = Client.UploadFile("http://achillium.us.to/digitneuralnet/uploadweights.php", "POST", "./Assets/dat/" + fitness + "_WeightSave.dat");
+        byte[] result = Client.UploadFile("http://achillium.us.to/digitneuralnet/uploadweights.php", "POST", "./dat/" + fitness + "_WeightSave.dat");
         string s = System.Text.Encoding.UTF8.GetString(result, 0, result.Length);
-        Console.WriteLine("* Uploaded \"./Assets/dat/" + fitness + "_WeightSave.dat\"");
+        Console.WriteLine("* Uploaded \"./dat/" + fitness + "_WeightSave.dat\"");
 
         // Upload weight save meta
-        Console.WriteLine("* Uploading \"./Assets/dat/" + fitness + "_WeightSaveMeta.mta\" to http://achillium.us.to/digitneuralnet/");
+        Console.WriteLine("* Uploading \"./dat/" + fitness + "_WeightSaveMeta.mta\" to http://achillium.us.to/digitneuralnet/");
         System.Net.WebClient ClientTwo = new System.Net.WebClient();
         ClientTwo.Headers.Add("enctype", "multipart/form-data");
-        byte[] resultTwo = ClientTwo.UploadFile("http://achillium.us.to/digitneuralnet/uploadweights.php", "POST", "./Assets/dat/" + fitness + "_WeightSaveMeta.mta");
+        byte[] resultTwo = ClientTwo.UploadFile("http://achillium.us.to/digitneuralnet/uploadweights.php", "POST", "./dat/" + fitness + "_WeightSaveMeta.mta");
         string sTwo = System.Text.Encoding.UTF8.GetString(resultTwo, 0, resultTwo.Length);
-        Console.WriteLine("* Uploaded \"./Assets/dat/" + fitness + "_WeightSaveMeta.mta\"");
+        Console.WriteLine("* Uploaded \"./dat/" + fitness + "_WeightSaveMeta.mta\"");
 
-        File.Delete("./Assets/dat/" + fitness + "_WeightSave.dat");
-        Console.WriteLine("* Deleted Copy at \"./Assets/dat/" + fitness + "_WeightSave.dat\"");
-        File.Delete("./Assets/dat/" + fitness + "_WeightSaveMeta.mta");
-        Console.WriteLine("* Deleted Copy at \"./Assets/dat/" + fitness + "_WeightSaveMeta.mta\"");
+        File.Delete("./dat/" + fitness + "_WeightSave.dat");
+        Console.WriteLine("* Deleted Copy at \"./dat/" + fitness + "_WeightSave.dat\"");
+        File.Delete("./dat/" + fitness + "_WeightSaveMeta.mta");
+        Console.WriteLine("* Deleted Copy at \"./dat/" + fitness + "_WeightSaveMeta.mta\"");
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("* Synced with server");
@@ -723,25 +728,25 @@ public class NetManager : MonoBehaviour
         Client.DownloadFile(new Uri("http://achillium.us.to/digitneuralnet/" + s + "_WeightSaveMeta.mta"), @".\dat\temp_WeightSaveMeta.mta");
         Console.WriteLine("* Downloaded \"" + s + "_WeightSaveMeta.mta\"");
 
-        if (File.Exists("./Assets/dat/temp_WeightSave.dat"))
+        if (File.Exists("./dat/temp_WeightSave.dat"))
         {
-            if (File.Exists("./Assets/dat/WeightSave.dat"))
-                File.Delete("./Assets/dat/WeightSave.dat");
-            File.Move("./Assets/dat/temp_WeightSave.dat", "./Assets/dat/WeightSave.dat");
+            if (File.Exists("./dat/WeightSave.dat"))
+                File.Delete("./dat/WeightSave.dat");
+            File.Move("./dat/temp_WeightSave.dat", "./dat/WeightSave.dat");
         }
-        if (File.Exists("./Assets/dat/temp_WeightSaveMeta.mta"))
+        if (File.Exists("./dat/temp_WeightSaveMeta.mta"))
         {
-            if (File.Exists("./Assets/dat/WeightSaveMeta.mta"))
-                File.Delete("./Assets/dat/WeightSaveMeta.mta");
-            File.Move("./Assets/dat/temp_WeightSaveMeta.mta", "./Assets/dat/WeightSaveMeta.mta");
+            if (File.Exists("./dat/WeightSaveMeta.mta"))
+                File.Delete("./dat/WeightSaveMeta.mta");
+            File.Move("./dat/temp_WeightSaveMeta.mta", "./dat/WeightSaveMeta.mta");
         }
 
-        StreamReader sr = File.OpenText("./Assets/dat/WeightSaveMeta.mta");
+        StreamReader sr = File.OpenText("./dat/WeightSaveMeta.mta");
         string firstLine = sr.ReadLine().Trim();
         string currentGen = firstLine.Split('#')[0];
         int generationNumber = int.Parse(currentGen) + 1;
         sr.Close();
-        StreamWriter persistence = new StreamWriter("./Assets/dat/WeightSaveMeta.mta");
+        StreamWriter persistence = new StreamWriter("./dat/WeightSaveMeta.mta");
         persistence.WriteLine((generationNumber).ToString() + "#" + s);
         persistence.Close();
 

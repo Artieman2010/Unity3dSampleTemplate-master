@@ -66,7 +66,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         Cmdgeneratekey(NetworkClient.connection.connectionId);
 
 
-        StartCoroutine(tester());
+       
 
 
     }
@@ -385,36 +385,7 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
           
         
     }
-    IEnumerator tester()
-    {
-        double[][][] weightsUpload;
-        double[] mutUpload;
-        BinaryFormatter bf = new BinaryFormatter();
-        //change everything to numbers later on 
-        using (FileStream fs = new FileStream($"./Assets/dat/WeightSave{thechosen}.bin", FileMode.Open))
-            weightsUpload = (double[][][])bf.Deserialize(fs);
-        BinaryFormatter bf2 = new BinaryFormatter();
-        using (FileStream fs2 = new FileStream($"./Assets/dat/MutVars{thechosen}.bin", FileMode.Open))
-            mutUpload = (double[])bf2.Deserialize(fs2);
-        NeuralNetwork net = new NeuralNetwork(layersf, weightsUpload);
-
-        //change everything to numbers later on 
-
-        net.weights = weightsUpload;
-        net.mutatableVariables = mutUpload;
-        yield return new WaitForSeconds(0.1f);
-        NetEntity y = Instantiate(walker, spawnPlace).GetComponent<NetEntity>();
-        y.Init(net, 1, layersf[0], 200000, 0);
-
-
-
-        while (iteratord(y.gameObject) != false)
-        {
-            yield return new WaitForSeconds(0.05f);
-        }
-
-        yield return new WaitForSeconds(5);
-    }
+   
 
     IEnumerator dothejob()
     {
@@ -424,10 +395,10 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         double[] mutUpload;
         BinaryFormatter bf = new BinaryFormatter();
         //change everything to numbers later on 
-        using (FileStream fs = new FileStream($"./Assets/dat/WeightSave{thechosen}.bin", FileMode.Open))
+        using (FileStream fs = new FileStream(Application.dataPath + $"/dat/WeightSave{thechosen}.bin", FileMode.Open))
             weightsUpload = (double[][][])bf.Deserialize(fs);
         BinaryFormatter bf2 = new BinaryFormatter();
-        using (FileStream fs2 = new FileStream($"./Assets/dat/MutVars{thechosen}.bin", FileMode.Open))
+        using (FileStream fs2 = new FileStream(Application.dataPath + $"/dat/MutVars{thechosen}.bin", FileMode.Open))
             mutUpload = (double[])bf2.Deserialize(fs2);
 
         var y = ConvertDataToBytes(weightsUpload);
@@ -587,24 +558,26 @@ public class HandleTheDropdown : NetworkBehaviour//ipunobservable onphotonserial
         net.weights = yd;
         net.mutatableVariables = ld;
         yield return new WaitForSeconds(0.1f);
-        NetEntity y  = Instantiate(walker, spawnPlace).GetComponent<NetEntity>();
-        y.Init(net, 1, layersf[0], 4000, 0 );
-      
+        NetEntity y  = Instantiate(walker, spawnPlace ).GetComponent<NetEntity>();
+        y.Init(net, 1, layersf[0], 10000, 1 );
 
+        
         
         while(iteratord(y.gameObject) != false)
         {
             yield return new WaitForSeconds(0.05f);
         }
 
-        yield return new WaitForSeconds(5);
-       
-        
-      /*  if(k < 0)
-        {
-            k *= -1f;
-        }*/
-        float speed = y.transform.position.x / 2.1f;
+
+
+
+        /*  if(k < 0)
+          {
+              k *= -1f;
+          }*/
+        float hello = y.transform.GetChild(0).position.x;
+        hello += 10f;
+        float speed = hello / 2.1f;
         Debug.Log(speed);
         Destroy(y.gameObject);
         CmdsetSpeedInShopList(index, Mathf.RoundToInt(speed * 10f) / 10f, secretCode);

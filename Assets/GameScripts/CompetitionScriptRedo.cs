@@ -37,7 +37,8 @@ public class CompetitionScriptRedo : NetworkBehaviour
         winnerObject = y[7];
         convertpublictoprivate = y[8].GetComponent<TMP_InputField>();
         prizeMoney_text = y[9].GetComponent<TMP_Text>();
-        
+        spawnpoint = y[10].transform;
+
         if (PlayerPrefs.GetInt("Compete") == 1)
         {
             shopCanvas.SetActive(false);
@@ -57,10 +58,10 @@ public class CompetitionScriptRedo : NetworkBehaviour
         if(PlayerPrefs.GetString("username") != "")
         {
             BinaryFormatter binaryFormatter = new BinaryFormatter();
-            using (FileStream fs = new FileStream($"./Assets/dat/WeightSave{chosen}.bin", FileMode.Open))
+            using (FileStream fs = new FileStream(Application.persistentDataPath + $"/dat/WeightSave{chosen}.bin", FileMode.Open))
                 weightgive = (double[][][])binaryFormatter.Deserialize(fs);
             BinaryFormatter bf2 = new BinaryFormatter();
-            using (FileStream fs2 = new FileStream($"./Assets/dat/MutVars{chosen}.bin", FileMode.Create))
+            using (FileStream fs2 = new FileStream(Application.persistentDataPath + $"/dat/MutVars{chosen}.bin", FileMode.Open))
                 giveMuts = (double[])bf2.Deserialize(fs2);
             var d = gameObject.GetComponent<HandleTheDropdown>().ConvertDouble1ToBytes(giveMuts);
             var x = gameObject.GetComponent<HandleTheDropdown>().ConvertDataToBytes(weightgive);
@@ -208,7 +209,7 @@ public class CompetitionScriptRedo : NetworkBehaviour
 
 
 
-                    
+                    Debug.Log("gothere");
                     var y = gameObject.GetComponent<LeaderboardList>().ethersendobject.transform.GetChild(4).gameObject.GetComponent<EtherTransferCoroutinesUnityWebRequest>();
 
 
@@ -305,6 +306,7 @@ public class CompetitionScriptRedo : NetworkBehaviour
         
     }
     int[] layers = new int[] { 9, 50, 20, 50, 5 };
+    public Transform spawnpoint;
     [Command(requiresAuthority = false)]
     void CmdStartGame(string secretCoded)
     {
@@ -318,13 +320,17 @@ public class CompetitionScriptRedo : NetworkBehaviour
                 if (NetworkServer.connections.ContainsKey(RegisteredWeightslist[i].connID))
                 {
                     Debug.Log("here");
-                    GameObject awker = Instantiate(walker);
-                    var y = awker.GetComponent<NetEntity>();
+                    GameObject awker = Instantiate(walker, spawnpoint );
+                    var y = awker.GetComponent<NetEntity1>();
                     NeuralNetwork net = new NeuralNetwork(layers, RegisteredWeightslist[i].weights);
-                    y.Init(net, 0, layers[0], 4000, 0);
                     net.weights = RegisteredWeightslist[i].weights;
-                    awker.transform.position = new Vector3(0, 0.27f, 0);
+                    net.mutatableVariables = RegisteredWeightslist[i].mutvars;
+                    y.Init(net, 0, layers[0], 20000, 0);
+                   
+                   
                     awker.name = RegisteredWeightslist[i].usernamed;
+                    y.ogrank.text = "OG Rank: " + RegisteredWeightslist[i].ogStatus.ToString();
+                    y.nameofus.text = "Username: " + RegisteredWeightslist[i].usernamed;
                   //  y.usernameText.text = RegisteredWeightslist[i].usernamed;
                    // y.ogStatus.text = "OG Rank: " + RegisteredWeightslist[i].ogStatus.ToString();
                     //y.Init(net);
@@ -332,6 +338,7 @@ public class CompetitionScriptRedo : NetworkBehaviour
 
 
                     NetworkServer.Spawn(awker);
+                    StartCoroutine(iteratingtheobjecT(awker));
                     //make it run on same server to create leaderboard
                 }
                
@@ -343,7 +350,21 @@ public class CompetitionScriptRedo : NetworkBehaviour
        
 
     }
-   
+    IEnumerator iteratingtheobjecT(GameObject gameobjectoiterate)
+    {
+        while (iteratord(gameobjectoiterate) != false)
+        {
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
+    bool iteratord(GameObject lookat)
+    {
+        int amnt = 1;
+
+        amnt -= lookat.GetComponent<NetEntity>().Elapse() ? 0 : 1;
+
+        return amnt != 0;
+    }
     string winnerUsername;
     
     
